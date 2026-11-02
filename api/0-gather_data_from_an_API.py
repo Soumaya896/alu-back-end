@@ -11,8 +11,9 @@ from sys import argv
 if __name__ == "__main__":
     if len(argv) > 1:
         emp_id = argv[1]
-        user_url = f"https://jsonplaceholder.typicode.com/users/{emp_id}"
-        todos_url = f"https://jsonplaceholder.typicode.com/todos?userId={emp_id}"
+        base_url = "https://jsonplaceholder.typicode.com"
+        user_url = f"{base_url}/users/{emp_id}"
+        todos_url = f"{base_url}/todos?userId={emp_id}"
 
         user_res = requests.get(user_url).json()
         todos_res = requests.get(todos_url).json()
