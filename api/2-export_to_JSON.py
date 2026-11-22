@@ -1,35 +1,20 @@
 #!/usr/bin/python3
-"""
-Python script that extends Task 0 to export employee TODO data in JSON format.
-"""
-
+"""Export an employee's TODO list data to a JSON file."""
 import json
-from sys import argv
 import requests
-
-
+import sys
 if __name__ == "__main__":
-    if len(argv) > 1:
-        emp_id = argv[1]
-        user_url = f"https://jsonplaceholder.typicode.com/users/{emp_id}"
-        todos_url = f"https://jsonplaceholder.typicode.com/todos?userId={emp_id}"
-
-        user_res = requests.get(user_url).json()
-        todos_res = requests.get(todos_url).json()
-
-        username = user_res.get("username")
-
-        tasks_list = []
-        for task in todos_res:
-            tasks_list.append(
-                {
-                    "task": task.get("title"),
-                    "completed": task.get("completed"),
-                    "username": username,
-                }
-            )
-
-        out_data = {str(emp_id): tasks_list}
-        filename = f"{emp_id}.json"
-        with open(filename, "w", encoding="utf-8") as f:
-            json.dump(out_data, f)
+    base_url = "https://jsonplaceholder.typicode.com"
+    employee_id = int(sys.argv[1])
+    user = requests.get(
+        "{}/users/{}".format(base_url, employee_id)).json()
+    todos = requests.get(
+        "{}/todos".format(base_url),
+        params={"userId": employee_id}).json()
+    username = user.get("username")
+    data = {str(employee_id): [
+        {"task": task.get("title"),
+         "completed": task.get("completed"),
+         "username": username} for task in todos]}
+    with open("{}.json".format(employee_id), "w") as json_file:
+        json.dump(data, json_file)
